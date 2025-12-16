@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YANTRAKSH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        background-color: #050505;
+        font-family: 'Orbitron', sans-serif;
+        overflow: hidden;
+      }
+      .neon-text {
+        color: transparent;
+        -webkit-text-stroke: 1px #ff00ff;
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(188, 19, 254, 0.5);
+      }
+      .neon-text-filled {
+        color: #ff00ff;
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+      }
+      
+      /* Custom Spin Animations */
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes spin-reverse-slow {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+      @keyframes spin-fast {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Blob Animations for Background */
+      @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+      }
+      
+      .animate-spin-slow {
+        animation: spin-slow 20s linear infinite;
+      }
+      .animate-spin-reverse-slow {
+        animation: spin-reverse-slow 15s linear infinite;
+      }
+      .animate-spin-medium {
+        animation: spin-slow 8s linear infinite;
+      }
+      .animate-spin-fast {
+        animation: spin-fast 1s linear infinite;
+      }
+      
+      .animate-blob {
+        animation: blob 10s infinite;
+      }
+      
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
+
+      .perspective-container {
+        perspective: 1000px;
+      }
+      .tilted-plane {
+        transform: rotateX(60deg) scale(1.5);
+        transform-origin: center bottom;
+      }
+
+      /* Tooltip Lifecycle Animation: 0.4s In, 3s Wait, 0.4s Out. Total 3.8s */
+      @keyframes tooltip-sequence {
+        0% { opacity: 0; transform: translate(-50%, 10px) scale(0.8); }
+        10.5% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        89.5% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -10px) scale(0.9); }
+      }
+      
+      .animate-tooltip-sequence {
+        animation: tooltip-sequence 3.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      /* Shimmer Effect for Music Button */
+      @keyframes shimmer {
+        100% { transform: translateX(100%); }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
