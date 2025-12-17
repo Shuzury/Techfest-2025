@@ -172,113 +172,157 @@ const Terminal: React.FC<TerminalProps> = ({ onEnter, isEntering, isMinimized = 
       transitionStyle = isDragging ? 'none' : 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease';
   }
 
+  // --- Gradient Definition ---
+  // Tail (Transparent) -> Deep Blue -> Pink -> Red -> Orange -> Head (Yellow)
+  // Conic gradient rotates clockwise. 360deg is the visual "front" when rotating.
+  const conicGradient = `conic-gradient(from 0deg, transparent 0deg, transparent 200deg, #1e3a8a 240deg, #ec4899 280deg, #ef4444 310deg, #f97316 340deg, #ffff00 360deg)`;
+
   return (
     // Fixed container allows free dragging anywhere on screen without margin constraints
     // pointer-events-none ensures clicks pass through to background when not interacting with terminal
     <div className={`fixed inset-0 flex items-center justify-center z-30 pointer-events-none ${isEntering ? 'opacity-0 scale-125' : 'opacity-100'} transition-all duration-1000 ease-in-out`}>
       <div 
-        className={`pointer-events-auto absolute w-[90%] md:w-[650px] bg-[#0c0c0c]/90 backdrop-blur-md rounded-lg border border-gray-700/50 shadow-[0_0_40px_rgba(217,70,239,0.15)] flex flex-col font-mono text-sm md:text-base group hover:border-fuchsia-500/30`}
+        className={`pointer-events-auto absolute w-[90%] md:w-[650px] rounded-lg shadow-[0_0_40px_rgba(217,70,239,0.15)] flex flex-col font-mono text-sm md:text-base group`}
         style={{ 
           transform: currentTransform,
           opacity: currentOpacity,
           transition: transitionStyle,
           cursor: isDragging ? 'grabbing' : 'default',
-          boxShadow: (isMinimized || animState === 'opening') ? 'none' : '0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 30px rgba(217, 70, 239, 0.1)',
         }}
       >
-        {/* Terminal Header / Title Bar - Added rounded-t-lg */}
-        <div 
-          className="bg-[#181818] rounded-t-lg px-4 py-2 flex items-center justify-between select-none cursor-grab active:cursor-grabbing border-b border-gray-800"
-          onMouseDown={handleMouseDown}
-        >
-          <div className="flex items-center gap-3">
-             <div className="flex items-center justify-center w-6 h-6 bg-gray-800 rounded-sm">
-                <span className="text-fuchsia-400 font-bold text-xs">{`>_`}</span>
-             </div>
-             <span className="text-gray-300 font-sans text-xs md:text-sm tracking-wide">Command Prompt</span>
-          </div>
-          {/* Window Controls */}
-          <div className="flex items-center gap-2 opacity-75">
-            <div 
-                className="hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded transition-colors cursor-pointer"
-                onClick={(e) => { e.stopPropagation(); onMinimize?.(); }}
-            >
-                <div className="w-3 h-px bg-gray-400"></div>
-            </div>
-            
-            {/* Maximize Button - Easter Egg Enabled */}
-            <div 
-              className="relative hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded transition-colors cursor-pointer group/max"
-              onClick={handleMaximizeClick}
-            >
-                <div className="w-2.5 h-2.5 border border-gray-400"></div>
-                
-                {/* Tooltip Overlay */}
-                {tooltipKey > 0 && (
-                  <div 
-                    key={tooltipKey}
-                    className="absolute bottom-full left-1/2 mb-3 z-50 pointer-events-none animate-tooltip-sequence"
-                    style={{ transform: 'translateX(-50%)', minWidth: 'max-content' }}
-                  >
-                     <div className="relative bg-white text-black text-xs font-bold px-4 py-2 rounded-2xl shadow-[0_0_20px_rgba(217,70,239,0.5)] whitespace-nowrap border-2 border-fuchsia-500">
-                        {tooltipMessage}
-                        
-                        {/* Comic Bubble Triangle Tail */}
-                        {/* Outer colored border triangle */}
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-fuchsia-500"></div>
-                        {/* Inner white triangle to create outline effect */}
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[3px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white"></div>
-                     </div>
-                  </div>
-                )}
-            </div>
-            
-            <div 
-                className="hover:bg-red-900/50 w-10 h-10 flex items-center justify-center rounded transition-colors group/close cursor-pointer"
-                onClick={handleCloseTrigger}
-            >
-                <div className="w-2.5 h-2.5 relative">
-                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-px bg-gray-400 group-hover/close:bg-red-400 rotate-45"></div>
-                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-px bg-gray-400 group-hover/close:bg-red-400 -rotate-45"></div>
+        {/* === SPINNING GRADIENT BORDER (START) === */}
+        {/* 
+            Creates a moving border beam effect looping around the terminal.
+            Structure:
+            1. Outer absolute container with negative inset to create border thickness (-inset-[3px]).
+            2. Centering Wrapper: Holds the spinning element centered to prevent 'animate-spin' from breaking position.
+            3. Spinning Div: Contains the conic gradient and rotates.
+        */}
+        <div className="absolute -inset-[3px] rounded-[10px] overflow-hidden pointer-events-none">
+            {/* Wrapper for centering to prevent transform conflict */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%]">
+                <div 
+                     className="w-full h-full animate-spin-slow"
+                     style={{ 
+                         background: conicGradient,
+                         animationDuration: '4s'
+                     }}
+                >
                 </div>
             </div>
-          </div>
+            
+            {/* Glow Layer (Blurry) - Adds the 'heavy glow' effect */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250%] h-[250%] opacity-60 blur-xl mix-blend-screen">
+                <div 
+                     className="w-full h-full animate-spin-slow"
+                     style={{ 
+                         background: conicGradient,
+                         animationDuration: '4s'
+                     }}
+                >
+                </div>
+            </div>
         </div>
+        {/* === SPINNING GRADIENT BORDER (END) === */}
 
-        {/* Terminal Content Body - Added rounded-b-lg and overflow-hidden */}
-        <div 
-          className="p-4 md:p-6 text-gray-200 flex-1 min-h-[250px] text-left font-mono rounded-b-lg overflow-hidden"
-          onClick={() => inputRef.current?.focus()}
-          style={{ fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace" }}
-        >
-          <div className="mb-6 text-gray-400 leading-relaxed">
-            <p>Triguna Sen School of Technology | Techfest [Version 3.60.2025.2026]</p>
-            <p>(c) Assam University Silchar. All rights reserved.</p>
-          </div>
-          
-          {/* Active Input Line */}
-          <div className="flex items-center flex-wrap">
-             <span className="text-gray-200 mr-2 shrink-0">SOT:\3rd_Year\User{`>`}</span>
-             <div className="relative flex-1 flex items-center min-w-[200px]">
-                <input 
-                  ref={inputRef}
-                  type="text" 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="bg-transparent border-none outline-none text-gray-100 w-full p-0 m-0 caret-transparent"
-                  autoComplete="off"
-                  disabled={isMinimized || animState !== 'open'}
-                />
-                {/* Custom Block Cursor */}
-                {showCursor && !isMinimized && animState === 'open' && (
+
+        {/* Main Terminal Content - Sits on TOP of the spinning border */}
+        {/* Added z-10 and bg-[#0c0c0c]/95 to obscure the center of the conic gradient, revealing only the border */}
+        {/* Removed overflow-hidden to allow tooltip to pop out. */}
+        <div className="relative z-10 flex flex-col w-full h-full bg-[#0c0c0c]/95 backdrop-blur-md rounded-lg border border-gray-700/50">
+            
+            {/* Terminal Header / Title Bar */}
+            <div 
+            className="bg-[#181818] rounded-t-lg px-4 py-2 flex items-center justify-between select-none cursor-grab active:cursor-grabbing border-b border-gray-800"
+            onMouseDown={handleMouseDown}
+            >
+            <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-6 h-6 bg-gray-800 rounded-sm">
+                    <span className="text-fuchsia-400 font-bold text-xs">{`>_`}</span>
+                </div>
+                <span className="text-gray-300 font-sans text-xs md:text-sm tracking-wide">Command Prompt</span>
+            </div>
+            {/* Window Controls */}
+            <div className="flex items-center gap-2 opacity-75">
+                <div 
+                    className="hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded transition-colors cursor-pointer"
+                    onClick={(e) => { e.stopPropagation(); onMinimize?.(); }}
+                >
+                    <div className="w-3 h-px bg-gray-400"></div>
+                </div>
+                
+                {/* Maximize Button - Easter Egg Enabled */}
+                <div 
+                className="relative hover:bg-gray-700 w-10 h-10 flex items-center justify-center rounded transition-colors cursor-pointer group/max"
+                onClick={handleMaximizeClick}
+                >
+                    <div className="w-2.5 h-2.5 border border-gray-400"></div>
+                    
+                    {/* Tooltip Overlay */}
+                    {tooltipKey > 0 && (
                     <div 
-                        className="absolute h-4 w-2 bg-gray-200 pointer-events-none"
-                        style={{ left: `${inputValue.length}ch` }}
-                    ></div>
-                )}
-             </div>
-          </div>
+                        key={tooltipKey}
+                        className="absolute bottom-full left-1/2 mb-3 z-50 pointer-events-none animate-tooltip-sequence"
+                        style={{ transform: 'translateX(-50%)', minWidth: 'max-content' }}
+                    >
+                        <div className="relative bg-white text-black text-xs font-bold px-4 py-2 rounded-2xl shadow-[0_0_20px_rgba(217,70,239,0.5)] whitespace-nowrap border-2 border-fuchsia-500">
+                            {tooltipMessage}
+                            
+                            {/* Comic Bubble Triangle Tail */}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-fuchsia-500"></div>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[3px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white"></div>
+                        </div>
+                    </div>
+                    )}
+                </div>
+                
+                <div 
+                    className="hover:bg-red-900/50 w-10 h-10 flex items-center justify-center rounded transition-colors group/close cursor-pointer"
+                    onClick={handleCloseTrigger}
+                >
+                    <div className="w-2.5 h-2.5 relative">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-px bg-gray-400 group-hover/close:bg-red-400 rotate-45"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-px bg-gray-400 group-hover/close:bg-red-400 -rotate-45"></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            {/* Terminal Content Body */}
+            <div 
+            className="p-4 md:p-6 text-gray-200 flex-1 min-h-[250px] text-left font-mono rounded-b-lg overflow-hidden"
+            onClick={() => inputRef.current?.focus()}
+            style={{ fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace" }}
+            >
+            <div className="mb-6 text-gray-400 leading-relaxed">
+                <p>Triguna Sen School of Technology | Techfest [Version 3.60.2025.2026]</p>
+                <p>(c) Assam University Silchar. All rights reserved.</p>
+            </div>
+            
+            {/* Active Input Line */}
+            <div className="flex items-center flex-wrap">
+                <span className="text-gray-200 mr-2 shrink-0">SOT:\3rd_Year\User{`>`}</span>
+                <div className="relative flex-1 flex items-center min-w-[200px]">
+                    <input 
+                    ref={inputRef}
+                    type="text" 
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="bg-transparent border-none outline-none text-gray-100 w-full p-0 m-0 caret-transparent"
+                    autoComplete="off"
+                    disabled={isMinimized || animState !== 'open'}
+                    />
+                    {/* Custom Block Cursor */}
+                    {showCursor && !isMinimized && animState === 'open' && (
+                        <div 
+                            className="absolute h-4 w-2 bg-gray-200 pointer-events-none"
+                            style={{ left: `${inputValue.length}ch` }}
+                        ></div>
+                    )}
+                </div>
+            </div>
+            </div>
         </div>
       </div>
     </div>
