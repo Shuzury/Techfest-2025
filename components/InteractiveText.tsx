@@ -158,20 +158,19 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({ onLogoClick }) => {
   const playSwooshSound = () => {
     // Restored Swoosh Effect for main text hover
     const audio = new Audio('https://cdn.pixabay.com/audio/2025/08/02/audio_6f4893deae.mp3');
-    audio.volume = 0.4;
+    audio.volume = 0.5;
     audio.play().catch(() => {});
   };
 
   const playBlinkSound = () => {
     // Specific Glitch Blip
     const audio = new Audio('https://cdn.pixabay.com/audio/2025/04/30/audio_c81de40176.mp3');
-    audio.volume = 0.5;
+    audio.volume = 0.3;
     audio.play().catch(() => {});
   };
 
   const handleKMouseEnter = (e: React.MouseEvent) => {
-    // Prevent this from triggering other handlers if nested (though structure is flat siblings inside h1 mostly)
-    // But conceptually correct to isolate logic.
+    // Prevent this from triggering other handlers if nested
     
     // Stop any current sequence and reset state
     if (glitchTimeoutRef.current) clearTimeout(glitchTimeoutRef.current);
@@ -210,7 +209,7 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({ onLogoClick }) => {
         className="inline-block select-none transition-colors duration-300"
         style={{ willChange: 'transform, filter' }} 
       >
-        <span className={className}>
+        <span className={`${className} ${isGlitching ? 'glitch-mode' : ''}`}>
             {char}
         </span>
       </span>
@@ -220,16 +219,16 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({ onLogoClick }) => {
     <div className="relative z-20 flex items-center justify-center">
        <style>{`
         @keyframes glitch-border-blink {
-            0% { text-shadow: none; }
-            5% { text-shadow: 1.5px 0 0 #ff00ff, -1.5px 0 0 #00ffff; }
-            10% { text-shadow: none; }
-            15% { text-shadow: -1.5px 0 0 #ff00ff, 1.5px 0 0 #00ffff; }
-            20% { text-shadow: none; }
-            25% { text-shadow: 1.5px 0 0 #ff00ff; }
-            30% { text-shadow: none; }
-            35% { text-shadow: -1.5px 0 0 #00ffff; }
-            40% { text-shadow: none; }
-            100% { text-shadow: none; }
+            0% { text-shadow: none; transform: skewX(0deg); }
+            5% { text-shadow: 2px 0 0 #ff00ff, -2px 0 0 #00ffff; transform: skewX(-5deg); }
+            10% { text-shadow: none; transform: skewX(0deg); }
+            15% { text-shadow: -2px 0 0 #ff00ff, 2px 0 0 #00ffff; transform: skewX(5deg); }
+            20% { text-shadow: none; transform: skewX(0deg); }
+            25% { text-shadow: 2px 0 0 #ff00ff; transform: skewX(-2deg); }
+            30% { text-shadow: none; transform: skewX(0deg); }
+            35% { text-shadow: -2px 0 0 #00ffff; transform: skewX(2deg); }
+            40% { text-shadow: none; transform: skewX(0deg); }
+            100% { text-shadow: none; transform: skewX(0deg); }
         }
         .glitch-mode {
             animation: glitch-border-blink 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
