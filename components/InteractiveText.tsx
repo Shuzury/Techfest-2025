@@ -144,6 +144,11 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({ onLogoClick }) => {
   }, []);
 
   const handleClick = () => {
+      // Mechanical Key Press Sound
+      const audio = new Audio('https://cdn.pixabay.com/audio/2025/01/25/audio_33947eea08.mp3');
+      audio.volume = 0.5;
+      audio.play().catch(() => {}); // Catch error if user hasn't interacted with document yet (though click implies they have)
+
       setIsClicked(true);
       if (onLogoClick) onLogoClick();
       setTimeout(() => setIsClicked(false), 200);
@@ -153,6 +158,11 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({ onLogoClick }) => {
     // Reset any existing timeout to ensure a fresh 1s blink sequence
     if (glitchTimeoutRef.current) clearTimeout(glitchTimeoutRef.current);
     
+    // Glitch Sound Effect
+    const audio = new Audio('https://cdn.pixabay.com/audio/2025/08/02/audio_6f4893deae.mp3');
+    audio.volume = 0.4;
+    audio.play().catch(() => {});
+
     setIsGlitching(true);
     
     // Stop glitching after 1 second (approx 3-4 blinks duration)
