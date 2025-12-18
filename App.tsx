@@ -8,6 +8,7 @@ import InteractiveText from './components/InteractiveText';
 import MusicPlayer from './components/MusicPlayer';
 import Home from './components/Home';
 import LoadingScreen from './components/LoadingScreen';
+import SocialButtons from './components/SocialButtons';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -99,6 +100,7 @@ function App() {
              <Background burstTrigger={bgBurst} />
              <MatrixRain active={isMusicPlaying} />
              <Decorations />
+             <SocialButtons />
           </div>
         )}
         
@@ -133,12 +135,17 @@ function App() {
               <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent mt-4 opacity-70 animate-line"></div>
               
               {/* Countdown Timer Wrapper - Positioned relative to the line */}
+              {/* 
+                  Adjusted spacing for symmetry:
+                  When isLayoutExpanded is true, translate-y is increased from 48vh to 56vh
+                  to push the timer lower and balance the gap created by the header moving up.
+              */}
               <div className={`
                   absolute top-full left-1/2 -translate-x-1/2 pt-12
                   transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] origin-top
                   ${staggerState.timer ? 'opacity-100' : 'opacity-0'}
                   ${isLayoutExpanded 
-                      ? 'translate-y-[49vh] scale-110 blur-0' 
+                      ? 'translate-y-[56vh] scale-110 blur-0' 
                       : 'translate-y-0 heavy-blur'}
               `}>
                  <Countdown />
