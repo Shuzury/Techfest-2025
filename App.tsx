@@ -77,87 +77,86 @@ function App() {
       setIsLayoutExpanded(false);
   };
 
-  if (showHome) {
-      return <Home onBack={handleHomeBack} />;
-  }
-
   return (
     <div className="min-h-screen w-full text-white flex flex-col items-center justify-center relative overflow-hidden font-sans bg-[#050505]">
       
-      {isLoading && <LoadingScreen />}
+      {/* 
+          GLOBAL COMPONENTS 
+          These stay mounted across page transitions to ensure 
+          uninterrupted audio and ambient effects.
+      */}
+      <MusicPlayer onPlayChange={setIsMusicPlaying} />
+      <MatrixRain active={isMusicPlaying} />
 
-      {/* Main App Content */}
-      <div className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${showMain ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-        
-        {/* Audio Player Control */}
-        <div className="pointer-events-auto">
-          <MusicPlayer onPlayChange={setIsMusicPlaying} />
-        </div>
+      {showHome ? (
+        <Home onBack={handleHomeBack} />
+      ) : (
+        <>
+          {isLoading && <LoadingScreen />}
 
-        {/* Dynamic Backgrounds */}
-        {staggerState.background && (
-          <div className="absolute inset-0 animate-fade-in pointer-events-none">
-             <Background burstTrigger={bgBurst} />
-             <MatrixRain active={isMusicPlaying} />
-             <Decorations />
-             <SocialButtons />
-          </div>
-        )}
-        
-        {/* Terminal Layer */}
-        {showTerminal && (
-          <div className="pointer-events-auto contents">
-            <Terminal 
-              onEnter={handleEnter} 
-              isEntering={false}
-              isMinimized={isMinimized}
-              onMinimize={() => setIsMinimized(true)}
-              onClose={handleTerminalClose}
-            />
-          </div>
-        )}
-        
-        {/* Main Layout Container */}
-        <div className={`relative z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none`}>
-          
-          {/* Header / Logo Wrapper */}
-          {staggerState.header && (
-            <div 
-                className={`
-                    relative transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] animate-fade-in w-full text-center
-                    ${isLayoutExpanded ? '-translate-y-[35vh]' : 'translate-y-0'}
-                `}
-            >
-              <div className="flex items-center justify-center pointer-events-auto">
-                 <InteractiveText onLogoClick={handleLogoClick} />
+          {/* Main Landing App Content */}
+          <div className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${showMain ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
+            
+            {/* Dynamic Backgrounds */}
+            {staggerState.background && (
+              <div className="absolute inset-0 animate-fade-in pointer-events-none">
+                 <Background burstTrigger={bgBurst} />
+                 <Decorations />
+                 <SocialButtons />
               </div>
-              
-              <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent mt-4 opacity-70 animate-line"></div>
-              
-              {/* Countdown Timer Wrapper - Positioned relative to the line */}
-              {/* 
-                  Adjusted spacing for symmetry:
-                  When isLayoutExpanded is true, translate-y is increased from 48vh to 56vh
-                  to push the timer lower and balance the gap created by the header moving up.
-              */}
-              <div className={`
-                  absolute top-full left-1/2 -translate-x-1/2 pt-12
-                  transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] origin-top
-                  ${staggerState.timer ? 'opacity-100' : 'opacity-0'}
-                  ${isLayoutExpanded 
-                      ? 'translate-y-[56vh] scale-110 blur-0' 
-                      : 'translate-y-0 heavy-blur'}
-              `}>
-                 <Countdown />
+            )}
+            
+            {/* Terminal Layer */}
+            {showTerminal && (
+              <div className="pointer-events-auto contents">
+                <Terminal 
+                  onEnter={handleEnter} 
+                  isEntering={false}
+                  isMinimized={isMinimized}
+                  onMinimize={() => setIsMinimized(true)}
+                  onClose={handleTerminalClose}
+                />
               </div>
+            )}
+            
+            {/* Main Layout Container */}
+            <div className={`relative z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none`}>
+              
+              {/* Header / Logo Wrapper */}
+              {staggerState.header && (
+                <div 
+                    className={`
+                        relative transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] animate-fade-in w-full text-center
+                        ${isLayoutExpanded ? '-translate-y-[35vh]' : 'translate-y-0'}
+                    `}
+                >
+                  <div className="flex items-center justify-center pointer-events-auto">
+                     <InteractiveText onLogoClick={handleLogoClick} />
+                  </div>
+                  
+                  <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent mt-4 opacity-70 animate-line"></div>
+                  
+                  {/* Countdown Timer Wrapper - Positioned relative to the line */}
+                  <div className={`
+                      absolute top-full left-1/2 -translate-x-1/2 pt-12
+                      transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] origin-top
+                      ${staggerState.timer ? 'opacity-100' : 'opacity-0'}
+                      ${isLayoutExpanded 
+                          ? 'translate-y-[56vh] scale-110 blur-0' 
+                          : 'translate-y-0 heavy-blur'}
+                  `}>
+                     <Countdown />
+                  </div>
+                </div>
+              )}
+
             </div>
-          )}
-
-        </div>
-        
-        {/* Scan lines overlay */}
-        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%] pointer-events-none mix-blend-overlay opacity-30"></div>
-      </div>
+            
+            {/* Scan lines overlay */}
+            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%] pointer-events-none mix-blend-overlay opacity-30"></div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
