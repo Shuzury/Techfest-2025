@@ -84,7 +84,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
         loop={true}
         onEnded={handleEnded}
         // Sci-Fi Ambient Background Track
-        src="https://cdn.pixabay.com/audio/2025/06/02/audio_4b86d1cc4c.mp3" 
+        //src="https://cdn.pixabay.com/audio/2025/06/02/audio_4b86d1cc4c.mp3" 
+        src="https://www.tecnoesis.co.in/bgm.mp3"
       />
       
       {/* Conditionally render the button based on hideButton prop */}

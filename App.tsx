@@ -29,20 +29,13 @@ function App() {
 
   // Loading sequence orchestration
   useEffect(() => {
-    // 1. Loading screen duration (3s)
     const loadTimer = setTimeout(() => {
       setIsLoading(false);
       setShowMain(true);
       
-      // 2. Background start
       setTimeout(() => setStaggerState(prev => ({ ...prev, background: true })), 100);
-      
-      // 3. Header appears
       setTimeout(() => setStaggerState(prev => ({ ...prev, header: true })), 1000);
-      
-      // 4. Timer fades in
       setTimeout(() => setStaggerState(prev => ({ ...prev, timer: true })), 1800);
-
     }, 3000);
 
     return () => clearTimeout(loadTimer);
@@ -82,14 +75,21 @@ function App() {
     <div className="min-h-screen w-full text-white flex flex-col items-center justify-center relative overflow-hidden font-sans bg-[#050505]">
       
       {/* 
-          GLOBAL COMPONENTS 
-          These stay mounted across page transitions to ensure 
-          uninterrupted audio and ambient effects.
-          Passing showHome as hideButton prop to remove UI on Home page.
+          GLOBAL PERSISTENT ELEMENTS
+          These stay mounted and visible regardless of the sub-page
+          to ensure smooth transitions for music and ambient effects.
       */}
       <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
       
-      {/* Matrix Rain placed very low in stacking order (z-1) */}
+      {/* Persistent Background Layer */}
+      {staggerState.background && (
+        <div className="absolute inset-0 z-0">
+          <Background burstTrigger={bgBurst} />
+          <Decorations />
+        </div>
+      )}
+
+      {/* Persistent Matrix Rain (Behind UI but above background) */}
       <MatrixRain active={isMusicPlaying} />
 
       {showHome ? (
@@ -101,18 +101,10 @@ function App() {
           {/* Main Landing App Content */}
           <div className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${showMain ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
             
-            {/* Background Decorations Layer */}
-            {staggerState.background && (
-              <div className="absolute inset-0 animate-fade-in pointer-events-none z-0">
-                 <Background burstTrigger={bgBurst} />
-                 <Decorations />
-              </div>
-            )}
-            
-            {/* Social Buttons Layer */}
+            {/* Social Buttons Layer (z-50) */}
             {staggerState.background && <SocialButtons />}
             
-            {/* Terminal Layer */}
+            {/* Terminal Layer (z-30) */}
             {showTerminal && (
               <div className="pointer-events-auto contents">
                 <Terminal 
@@ -125,10 +117,9 @@ function App() {
               </div>
             )}
             
-            {/* Main Layout Container - Explicitly z-20 to be above MatrixRain (z-1) */}
+            {/* Main Content (z-20) */}
             <div className={`relative z-20 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none`}>
               
-              {/* Header / Logo Wrapper */}
               {staggerState.header && (
                 <div 
                     className={`
@@ -142,7 +133,6 @@ function App() {
                   
                   <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent mt-4 opacity-70 animate-line"></div>
                   
-                  {/* Countdown Timer Wrapper - Positioned relative to the line */}
                   <div className={`
                       absolute top-full left-1/2 -translate-x-1/2 pt-12
                       transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] origin-top
@@ -158,7 +148,7 @@ function App() {
 
             </div>
             
-            {/* Scan lines overlay - Highest layer */}
+            {/* Scan lines overlay */}
             <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%] pointer-events-none mix-blend-overlay opacity-30"></div>
           </div>
         </>
