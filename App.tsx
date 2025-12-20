@@ -10,6 +10,7 @@ import MusicPlayer from './components/MusicPlayer';
 import Home from './components/Home';
 import LoadingScreen from './components/LoadingScreen';
 import SocialButtons from './components/SocialButtons';
+import WarpEffect from './components/WarpEffect';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +23,7 @@ function App() {
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showHome, setShowHome] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLayoutExpanded, setIsLayoutExpanded] = useState(false);
   const [showTerminal, setShowTerminal] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -42,11 +44,31 @@ function App() {
   }, []);
 
   const handleEnter = () => {
-    setShowHome(true);
+    // Stage 1: Trigger long 6s orchestrated transition
+    setIsTransitioning(true);
+    
+    // Stage 2: Component switch near the end of the warp
+    setTimeout(() => {
+      setShowHome(true);
+    }, 5200);
+
+    // Stage 3: Clean up transition
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 6000);
   };
 
   const handleHomeBack = () => {
-    setShowHome(false);
+    // UNIFIED: Use same 6s transition as handleEnter
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      setShowHome(false);
+    }, 5200);
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 6000);
   };
 
   const handleLogoClick = () => {
@@ -74,42 +96,51 @@ function App() {
   return (
     <div className="min-h-screen w-full text-white flex flex-col items-center justify-center relative overflow-hidden font-sans bg-[#050505]">
       
-      {/* 
-          GLOBAL PERSISTENT ELEMENTS
-          These stay mounted and visible regardless of the sub-page
-          to ensure smooth transitions for music and ambient effects.
-      */}
+      {/* GLOBAL PERSISTENT ELEMENTS */}
       <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
       
       {/* Persistent Background Layer */}
       {staggerState.background && (
-        <div className="absolute inset-0 z-0">
+        <div className={`absolute inset-0 z-0 transition-opacity duration-[2000ms] ${showHome ? 'opacity-0' : 'opacity-100'}`}>
           <Background burstTrigger={bgBurst} />
           <Decorations />
         </div>
       )}
 
-      {/* Persistent Matrix Rain (Behind UI but above background) */}
+      {/* Transition Warp Layer - Dynamic 6s Unified Warp */}
+      <WarpEffect active={isTransitioning} duration={6000} />
+
+      {/* Screen Flash Overlay - Subtle digital pulse at landing */}
+      <div className={`fixed inset-0 z-[200] bg-fuchsia-600 pointer-events-none transition-opacity duration-1000 ${isTransitioning ? 'opacity-20' : 'opacity-0'}`}></div>
+
+      {/* Persistent Matrix Rain */}
       <MatrixRain active={isMusicPlaying} />
 
       {showHome ? (
-        <Home onBack={handleHomeBack} />
+        <div className={`w-full h-full transition-all duration-[1800ms] ease-out ${isTransitioning ? 'opacity-0 scale-110 blur-xl' : 'opacity-100 scale-100 blur-0'}`}>
+          <Home onBack={handleHomeBack} />
+        </div>
       ) : (
         <>
           {isLoading && <LoadingScreen />}
 
           {/* Main Landing App Content */}
-          <div className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${showMain ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
+          <div className={`
+            fixed inset-0 flex flex-col items-center justify-center transition-all duration-[1500ms] ease-in-out
+            ${showMain ? 'opacity-100' : 'opacity-0'} 
+            ${isTransitioning ? 'opacity-0 scale-[2] blur-[60px]' : 'scale-100 blur-0'}
+            pointer-events-none
+          `}>
             
-            {/* Social Buttons Layer (z-50) */}
+            {/* Social Buttons Layer */}
             {staggerState.background && <SocialButtons />}
             
-            {/* Terminal Layer (z-30) */}
+            {/* Terminal Layer */}
             {showTerminal && (
               <div className="pointer-events-auto contents">
                 <Terminal 
                   onEnter={handleEnter} 
-                  isEntering={false}
+                  isEntering={isTransitioning}
                   isMinimized={isMinimized}
                   onMinimize={() => setIsMinimized(true)}
                   onClose={handleTerminalClose}
@@ -117,7 +148,7 @@ function App() {
               </div>
             )}
             
-            {/* Main Content (z-20) */}
+            {/* Main Content */}
             <div className={`relative z-20 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none`}>
               
               {staggerState.header && (

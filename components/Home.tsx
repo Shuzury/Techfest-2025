@@ -36,7 +36,6 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
         
         {/* Branding Area - Styled exactly like landing page */}
         <div className="flex items-center gap-4 md:gap-5 group select-none shrink-0">
-          {/* Logo Box - Updated to be a slightly rounded square instead of a squircle */}
           <div 
             onClick={onBack}
             className="w-10 h-10 md:w-12 md:h-12 bg-[#1e1e1e] border border-gray-700 rounded-sm md:rounded-md flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.25)] hover:scale-105 hover:border-fuchsia-500 hover:shadow-[0_0_25px_rgba(217,70,239,0.5)] transition-all duration-300 cursor-pointer"
@@ -47,7 +46,6 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
             </span>
           </div>
           
-          {/* YANTRAKSH Text - Using Anton font as in central hero text */}
           <span 
             onClick={onBack}
             className="text-xl md:text-3xl font-anton tracking-[0.08em] text-white hover:text-fuchsia-400 hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.4)] transition-all duration-500 uppercase cursor-pointer"
@@ -72,7 +70,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
         
         {/* SECTION 1: HERO */}
         <section id="home" className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-4 relative">
-          <div className="text-center animate-fade-in-up">
+          <div className="text-center animate-home-entry">
             <h2 className="text-5xl md:text-8xl font-anton tracking-widest text-white mb-6 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
               THE NEXT GEN <br/> TECH FEST
             </h2>
@@ -128,9 +126,8 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
           </div>
         </section>
 
-        {/* SECTION 4: FINAL CTA (CLIMAX) */}
+        {/* SECTION 4: FINAL CTA */}
         <section id="register" className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
-          {/* Ambient Grid Floor */}
           <div className="absolute bottom-0 w-full h-[60vh] opacity-[0.07] pointer-events-none" style={{ background: 'linear-gradient(0deg, #d946ef 1px, transparent 1px), linear-gradient(90deg, #d946ef 1px, transparent 1px)', backgroundSize: '60px 60px', transform: 'perspective(600px) rotateX(65deg)' }}></div>
           
           <div className="flex flex-col items-center text-center z-20">
@@ -156,12 +153,12 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] z-[1000] bg-[length:100%_4px,4px_100%] opacity-20"></div>
 
       <style>{`
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(50px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes home-entry {
+          from { opacity: 0; transform: scale(1.1) translateY(30px); filter: blur(10px); }
+          to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
-        .animate-fade-in-up {
-          animation: fade-in-up 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        .animate-home-entry {
+          animation: home-entry 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
         }
         ::-webkit-scrollbar {
           width: 6px;
