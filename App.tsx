@@ -44,11 +44,6 @@ function App() {
 
   /**
    * Universal Transition Orchestrator
-   * Handles Landing -> Home and Home -> Landing with the same visual sequence:
-   * 1. Zoom out / Blur UI elements
-   * 2. Fade in black overlay + Transition Loading Screen
-   * 3. Swap content at mid-point (5.5s)
-   * 4. Zoom in / Unblur new UI elements
    */
   const triggerTransition = (targetIsHome: boolean) => {
     setIsTransitioning(true);
@@ -63,7 +58,7 @@ function App() {
         setShowHome(targetIsHome);
     }, 5500);
 
-    // Step 4: Final cleanup - return focus and hide the loader
+    // Step 4: Final cleanup
     setTimeout(() => {
         setShowTransitionLoader(false);
         setIsTransitioning(false);
@@ -108,8 +103,6 @@ function App() {
         )}
         <MatrixRain active={isMusicPlaying} />
       </div>
-
-      <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
       
       {/* INITIAL BOOT LOADING SCREEN */}
       {isAppLoading && <LoadingScreen />}
@@ -120,8 +113,6 @@ function App() {
       {/* FULL-SCREEN BLACK VOID OVERLAY (Z-400) */}
       <div className={`fixed inset-0 z-[400] bg-black transition-opacity duration-1000 ${isTransitioning ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}></div>
 
-      {/* CONTENT LAYERS - INDEPENDENT SCALING/BLURRING */}
-      
       {/* LANDING PAGE WRAPPER */}
       {!showHome && (
         <div className={`
@@ -129,6 +120,9 @@ function App() {
           ${showMain ? 'opacity-100' : 'opacity-0'} 
           ${isTransitioning ? 'blur-[50px] scale-[0.8] opacity-0' : 'blur-0 scale-100'}
         `}>
+          {/* Music player moved here to transition with landing page elements */}
+          <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
+          
           <SocialButtons />
           
           <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none">

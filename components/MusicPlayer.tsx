@@ -122,7 +122,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
       {!hideButton && (
         <div 
           className={`
-            fixed top-8 right-8 z-[150] flex flex-col items-center
+            fixed top-8 right-8 z-[100] pointer-events-auto flex flex-col items-center
             bg-[#0c0c0c] border border-fuchsia-500/30 overflow-hidden
             transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]
             shadow-[0_0_25px_rgba(217,70,239,0.2)]
@@ -133,7 +133,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {/* Top Control Bar - Parent is flex items-center justify-center */}
+          {/* Top Control Bar */}
           <div 
             className="w-full h-16 flex items-center justify-center shrink-0 cursor-pointer relative group/inner"
             onClick={togglePlay}
@@ -142,7 +142,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-fuchsia-500/10 to-transparent -translate-x-full group-hover/inner:animate-[shimmer_1.5s_infinite]"></div>
 
             <div className="flex items-center justify-center shrink-0 z-10">
-              {/* Perfectly Centered Icon Container */}
               <div className="relative flex items-center justify-center w-8 h-8 shrink-0">
                 {isPlaying ? (
                    <div className="flex gap-1 items-center h-4">
@@ -155,7 +154,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
                 )}
               </div>
 
-              {/* Sliding Text Label Transition - ml-0 when hidden to keep icon perfectly centered */}
               <div className={`
                 relative h-6 overflow-hidden transition-all duration-500
                 ${isHovered ? 'opacity-100 max-w-[200px] ml-2' : 'opacity-0 max-w-0 ml-0'}
@@ -198,7 +196,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
                     />
                 </div>
                 
-                {/* Volume Number Display - Fixed width container prevents layout vibration */}
                 <div className={`
                     flex flex-col items-end justify-center transition-all duration-700 ease-in-out w-16 shrink-0
                     ${isChanging ? 'text-fuchsia-400 drop-shadow-[0_0_12px_rgba(217,70,239,0.8)]' : 'text-white opacity-40'}
@@ -213,7 +210,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
       )}
 
       <style>{`
-        /* Material You Slider Custom Track and Thumb */
         .material-you-slider {
           -webkit-appearance: none;
           background: transparent;
@@ -268,6 +264,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onPlayChange, hideButton = fa
           border-radius: 3px;
           border: none;
           cursor: pointer;
+        }
+        @keyframes shimmer {
+          100% { transform: translateX(100%); }
         }
       `}</style>
     </>
