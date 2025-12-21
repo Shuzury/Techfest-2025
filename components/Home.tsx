@@ -26,7 +26,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="h-screen w-full bg-transparent text-white font-mono relative overflow-y-auto overflow-x-hidden z-[100] scroll-smooth">
+    <div className="h-screen w-full bg-transparent text-white font-mono relative overflow-y-auto overflow-x-hidden z-[100] scroll-smooth pointer-events-auto">
       
       {/* BACKGROUND FLARE is removed here and moved to persistent layer if needed, 
           but for now we rely on the stable Background.tsx blobs */}

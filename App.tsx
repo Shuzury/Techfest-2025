@@ -103,6 +103,14 @@ function App() {
         )}
         <MatrixRain active={isMusicPlaying} />
       </div>
+
+      {/* PERSISTENT AUDIO PLAYER (Z-300) 
+          Mounted here so it never unmounts. 
+          UI is hidden during boot (!showMain), home (showHome), and transition (isTransitioning). */}
+      <MusicPlayer 
+        onPlayChange={setIsMusicPlaying} 
+        hideButton={showHome || !showMain || isTransitioning} 
+      />
       
       {/* INITIAL BOOT LOADING SCREEN */}
       {isAppLoading && <LoadingScreen />}
@@ -116,13 +124,10 @@ function App() {
       {/* LANDING PAGE WRAPPER */}
       {!showHome && (
         <div className={`
-          fixed inset-0 flex flex-col items-center justify-center transition-all duration-[1200ms] ease-in-out z-[200]
+          fixed inset-0 flex flex-col items-center justify-center transition-all duration-[1200ms] ease-in-out z-[200] pointer-events-none
           ${showMain ? 'opacity-100' : 'opacity-0'} 
           ${isTransitioning ? 'blur-[50px] scale-[0.8] opacity-0' : 'blur-0 scale-100'}
         `}>
-          {/* Music player moved here to transition with landing page elements */}
-          <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
-          
           <SocialButtons />
           
           <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-5xl px-4 pointer-events-none">
@@ -140,12 +145,14 @@ function App() {
           </div>
 
           {showTerminal && (
-            <Terminal 
-              onEnter={handleEnter} 
-              isMinimized={isMinimized}
-              onMinimize={() => setIsMinimized(true)}
-              onClose={handleTerminalClose}
-            />
+            <div className="pointer-events-auto">
+              <Terminal 
+                onEnter={handleEnter} 
+                isMinimized={isMinimized}
+                onMinimize={() => setIsMinimized(true)}
+                onClose={handleTerminalClose}
+              />
+            </div>
           )}
         </div>
       )}
@@ -153,7 +160,7 @@ function App() {
       {/* HOME PAGE WRAPPER */}
       {showHome && (
         <div className={`
-          fixed inset-0 w-full h-full transition-all duration-[1200ms] ease-out z-[200]
+          fixed inset-0 w-full h-full transition-all duration-[1200ms] ease-out z-[200] pointer-events-none
           ${isTransitioning ? 'blur-[50px] scale-[0.8] opacity-0' : 'blur-0 scale-100 opacity-100'}
         `}>
           <Home onBack={handleHomeBack} />
