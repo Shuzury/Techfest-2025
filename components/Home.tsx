@@ -26,13 +26,13 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="h-screen w-full bg-[#050205] text-white font-mono relative overflow-y-auto overflow-x-hidden z-[100] scroll-smooth">
+    <div className="h-screen w-full bg-transparent text-white font-mono relative overflow-y-auto overflow-x-hidden z-[100] scroll-smooth">
       
-      {/* BACKGROUND FLARE - Persistent ambient light */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-[60vh] bg-fuchsia-950/10 blur-[180px] pointer-events-none rounded-full z-0"></div>
+      {/* BACKGROUND FLARE is removed here and moved to persistent layer if needed, 
+          but for now we rely on the stable Background.tsx blobs */}
 
       {/* STICKY HEADER - Balanced proportions */}
-      <header className="sticky top-0 w-full h-20 md:h-24 flex items-center justify-between px-6 md:px-12 z-[150] bg-[#050205]/95 backdrop-blur-md border-b border-fuchsia-500/10">
+      <header className="sticky top-0 w-full h-20 md:h-24 flex items-center justify-between px-6 md:px-12 z-[150] bg-black/60 backdrop-blur-md border-b border-fuchsia-500/10">
         
         {/* Branding Area - Styled exactly like landing page */}
         <div className="flex items-center gap-4 md:gap-5 group select-none shrink-0">
@@ -54,12 +54,12 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
           </span>
         </div>
 
-        {/* Central Navigation Slider - PRESERVED */}
+        {/* Central Navigation Slider */}
         <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-40">
             <NavbarSlider />
         </div>
 
-        {/* Right Side CTA - PRESERVED */}
+        {/* Right Side CTA */}
         <div className="flex items-center z-50 shrink-0">
             <RegisterButton size="sm" />
         </div>
@@ -87,7 +87,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
         </section>
 
         {/* SECTION 2: MODULES */}
-        <section id="modules" className="min-h-screen flex flex-col items-center justify-center px-4 py-24 bg-[#080308]/50">
+        <section id="modules" className="min-h-screen flex flex-col items-center justify-center px-4 py-24 bg-black/30">
           <div className="max-w-6xl w-full">
             <h3 className="text-3xl md:text-4xl font-anton tracking-widest text-white mb-16 flex items-center gap-6">
               <span className="w-12 h-px bg-fuchsia-500"></span>
@@ -95,7 +95,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[1, 2, 3].map((item) => (
-                <div key={item} className="group bg-[#0c0c0c] border border-fuchsia-500/20 rounded-2xl p-10 transition-all hover:border-fuchsia-500/60 hover:shadow-[0_0_40px_rgba(217,70,239,0.05)] relative overflow-hidden">
+                <div key={item} className="group bg-black/40 border border-fuchsia-500/20 rounded-2xl p-10 transition-all hover:border-fuchsia-500/60 hover:shadow-[0_0_40px_rgba(217,70,239,0.05)] relative overflow-hidden backdrop-blur-sm">
                   <div className="absolute top-0 right-0 p-4 text-[10px] text-fuchsia-500/30 font-mono tracking-widest uppercase">M_0{item}</div>
                   <div className="w-16 h-16 bg-fuchsia-500/5 rounded-xl flex items-center justify-center mb-8 border border-fuchsia-500/10 group-hover:bg-fuchsia-500/10 group-hover:scale-110 transition-all">
                     <div className="w-6 h-6 bg-fuchsia-500 rounded shadow-[0_0_12px_#d946ef]"></div>
@@ -117,7 +117,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
              </h3>
              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
-                  <div key={i} className="aspect-square bg-[#0c0c0c] border border-white/5 rounded-xl overflow-hidden group relative flex items-center justify-center">
+                  <div key={i} className="aspect-square bg-black/40 border border-white/5 rounded-xl overflow-hidden group relative flex items-center justify-center backdrop-blur-sm">
                     <div className="absolute inset-0 bg-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <span className="text-white/5 font-anton text-6xl group-hover:text-white/20 transition-colors">0{i+1}</span>
                   </div>
@@ -149,9 +149,6 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
 
       </div>
 
-      {/* Persistent Scanline Effect */}
-      <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] z-[1000] bg-[length:100%_4px,4px_100%] opacity-20"></div>
-
       <style>{`
         @keyframes home-entry {
           from { opacity: 0; transform: scale(1.1) translateY(30px); filter: blur(10px); }
@@ -164,7 +161,7 @@ const Home: React.FC<HomeProps> = ({ onBack }) => {
           width: 6px;
         }
         ::-webkit-scrollbar-track {
-          background: #050205;
+          background: transparent;
         }
         ::-webkit-scrollbar-thumb {
           background: #d946ef;

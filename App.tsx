@@ -30,7 +30,7 @@ function App() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [bgBurst, setBgBurst] = useState(0);
 
-  // Initial Boot Sequence
+  // Initial Boot Sequence (Only happens once on site load)
   useEffect(() => {
     const loadTimer = setTimeout(() => {
       setIsAppLoading(false);
@@ -42,29 +42,36 @@ function App() {
     return () => clearTimeout(loadTimer);
   }, []);
 
-  // Simplified Transition Logic
-  const startTransition = (toHome: boolean) => {
+  /**
+   * Universal Transition Orchestrator
+   * Handles Landing -> Home and Home -> Landing with the same visual sequence:
+   * 1. Zoom out / Blur UI elements
+   * 2. Fade in black overlay + Transition Loading Screen
+   * 3. Swap content at mid-point (5.5s)
+   * 4. Zoom in / Unblur new UI elements
+   */
+  const triggerTransition = (targetIsHome: boolean) => {
     setIsTransitioning(true);
     
-    // Wait for initial blur/fade-out
+    // Step 2: Show the transition screen after the initial "zoom out" starts
     setTimeout(() => {
         setShowTransitionLoader(true);
     }, 800);
 
-    // Swap content mid-load
+    // Step 3: Swap the underlying content mid-transition
     setTimeout(() => {
-        setShowHome(toHome);
+        setShowHome(targetIsHome);
     }, 5500);
 
-    // Un-blur and finish
+    // Step 4: Final cleanup - return focus and hide the loader
     setTimeout(() => {
         setShowTransitionLoader(false);
         setIsTransitioning(false);
     }, 6500);
   };
 
-  const handleEnter = () => startTransition(true);
-  const handleHomeBack = () => startTransition(false);
+  const handleEnter = () => triggerTransition(true);
+  const handleHomeBack = () => triggerTransition(false);
 
   const handleLogoClick = () => {
     if (isLayoutExpanded) {
@@ -91,7 +98,7 @@ function App() {
   return (
     <div className="min-h-screen w-full text-white flex flex-col items-center justify-center relative overflow-hidden font-sans bg-[#050505]">
       
-      {/* PERSISTENT STABLE BACKGROUND LAYER (Z-0) - No Scaling/Blurring during transition */}
+      {/* PERSISTENT STABLE BACKGROUND LAYER (Z-0) */}
       <div className={`fixed inset-0 z-0 transition-opacity duration-1000 ${showHome ? 'opacity-40' : 'opacity-100'}`}>
         {staggerState.background && (
           <>
@@ -104,23 +111,23 @@ function App() {
 
       <MusicPlayer onPlayChange={setIsMusicPlaying} hideButton={showHome} />
       
-      {/* INITIAL BOOT LOADING */}
+      {/* INITIAL BOOT LOADING SCREEN */}
       {isAppLoading && <LoadingScreen />}
 
       {/* TRANSITION LOADING SCREEN (Z-500) */}
       {showTransitionLoader && <LoadingScreen isTransition={true} />}
 
-      {/* Transition Overlay (Z-400) */}
+      {/* FULL-SCREEN BLACK VOID OVERLAY (Z-400) */}
       <div className={`fixed inset-0 z-[400] bg-black transition-opacity duration-1000 ${isTransitioning ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}></div>
 
-      {/* CONTENT LAYERS (Z-100 TO Z-300) */}
+      {/* CONTENT LAYERS - INDEPENDENT SCALING/BLURRING */}
       
-      {/* LANDING PAGE CONTENT WRAPPER - Scales and blurs independently of background */}
+      {/* LANDING PAGE WRAPPER */}
       {!showHome && (
         <div className={`
           fixed inset-0 flex flex-col items-center justify-center transition-all duration-[1200ms] ease-in-out z-[200]
           ${showMain ? 'opacity-100' : 'opacity-0'} 
-          ${isTransitioning ? 'blur-[40px] scale-[0.8] opacity-0' : 'blur-0 scale-100'}
+          ${isTransitioning ? 'blur-[50px] scale-[0.8] opacity-0' : 'blur-0 scale-100'}
         `}>
           <SocialButtons />
           
@@ -149,17 +156,17 @@ function App() {
         </div>
       )}
 
-      {/* HOME PAGE CONTENT WRAPPER - Scales and blurs independently of background */}
+      {/* HOME PAGE WRAPPER */}
       {showHome && (
         <div className={`
           fixed inset-0 w-full h-full transition-all duration-[1200ms] ease-out z-[200]
-          ${isTransitioning ? 'blur-[40px] scale-[0.8] opacity-0' : 'blur-0 scale-100 opacity-100'}
+          ${isTransitioning ? 'blur-[50px] scale-[0.8] opacity-0' : 'blur-0 scale-100 opacity-100'}
         `}>
           <Home onBack={handleHomeBack} />
         </div>
       )}
 
-      {/* Global CRT Scanlines (Z-600) */}
+      {/* GLOBAL SCANLINES / POST-PROCESS LAYER */}
       <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,20,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[600] bg-[length:100%_2px,3px_100%] opacity-20"></div>
     </div>
   );
